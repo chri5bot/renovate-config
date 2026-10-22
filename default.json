@@ -8,8 +8,12 @@
     "group:allNonMajor"
   ],
   "timezone": "America/Guayaquil",
-  "schedule": ["before 7am on monday"],
-  "labels": ["dependencies"],
+  "schedule": [
+    "before 7am on monday"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "semanticCommitType": "chore",
   "semanticCommitScope": "deps",
   "minimumReleaseAge": "3 days",
@@ -18,22 +22,79 @@
   "automerge": false,
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
-    "labels": ["dependencies", "security"]
+    "labels": [
+      "dependencies",
+      "security"
+    ]
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 7am on the first day of the month"]
+    "schedule": [
+      "* 0-6 1-7 * 4"
+    ]
   },
   "packageRules": [
     {
       "description": "Major updates are listed on the Dependency Dashboard and only get a PR once approved there.",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "dependencyDashboardApproval": true
     },
     {
       "description": "GitHub Actions bumps are grouped on their own so a workflow change never mixes with runtime dependencies.",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github actions"
+    },
+    {
+      "description": "Majors that must move together (vite 8 needed @vitejs/plugin-react 6 in the same PR, orbit-box 2026-10) form one group.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "vite",
+        "@vitejs/**",
+        "vitest",
+        "@vitest/**"
+      ],
+      "groupName": "vite and vitest majors"
+    },
+    {
+      "description": "Formatters and linters are pinned exactly: a caret range on Biome changed what it formats in a lockfile PR (licita #38, platform #21).",
+      "matchPackageNames": [
+        "@biomejs/biome",
+        "prettier",
+        "eslint",
+        "oxlint"
+      ],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Every Bun pin (setup-bun steps, reusable-workflow inputs, packageManager) moves in one PR (platform #20).",
+      "matchDepNames": [
+        "bun",
+        "oven-sh/bun"
+      ],
+      "groupName": "bun"
+    }
+  ],
+  "rebaseWhen": "conflicted",
+  "internalChecksFilter": "strict",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "bun-version passed as an input to a reusable workflow (`uses: .../.github/workflows/x.yml` with `bun-version: \"x.y.z\"`): the bun manager only reads oven-sh/setup-bun steps (platform #20). Assumes the usual 2-space YAML: the input lines sit 4+ spaces deep, so the match stops at the next job key.",
+      "managerFilePatterns": [
+        "/(^|/)\\.github/workflows/[^/]+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "uses:[ \\t]*[^ \\t\\n]+/\\.github/workflows/[^\\n]*\\n(?:[ \\t]{4,}[^ \\t\\n][^\\n]*\\n)*?[ \\t]{4,}bun-version:[ \\t]*[\"']?(?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']?"
+      ],
+      "depNameTemplate": "oven-sh/bun",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^bun-v(?<version>.+)$"
     }
   ]
 }

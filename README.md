@@ -31,11 +31,15 @@ owns the consuming repository.
 | GitHub Actions | Their own grouped PR, never mixed with runtime dependencies |
 | Major updates | Listed on the Dependency Dashboard issue; a PR opens only after you tick the item there |
 | Security | OSV vulnerability alerts open a PR at any time, labelled `security` |
-| Release age | Versions younger than 3 days are skipped (`minimumReleaseAge`) |
-| Lockfiles | Monthly lockfile maintenance PR (transitive updates) |
+| Release age | Versions younger than 3 days are skipped (`minimumReleaseAge`), and no PR opens while a version is still inside that window (`internalChecksFilter: strict`) |
+| Rebases | Only when a PR conflicts with its base (`rebaseWhen: conflicted`), never after every merge |
+| Majors that move together | `vite`, `@vitejs/*`, `vitest` and `@vitest/*` majors form one group, so vite and its React plugin land in the same PR |
+| Formatters and linters | `@biomejs/biome`, `prettier`, `eslint` and `oxlint` are pinned to exact versions, so a new release never changes formatting inside a lockfile PR |
+| Bun | Every Bun pin moves in one PR, including a `bun-version` input passed to a reusable workflow (a custom regex manager; it assumes 2-space YAML) |
+| Lockfiles | Lockfile maintenance PR on the first Thursday of the month, apart from Monday's grouped PR so the two never conflict in `bun.lock` |
 | Commits | Conventional Commits: `chore(deps): ...` |
 | Limits | At most 3 open PRs and 2 new PRs per hour per repository |
-| Automerge | Off. CI runs locally for now, so every PR is merged by a person after `ci-run` |
+| Automerge | Off. CI runs locally for now: every PR merges after `merge-gate` (platform) is green |
 
 ## Override per repository
 
