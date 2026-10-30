@@ -36,6 +36,7 @@ owns the consuming repository.
 | Majors that move together | `vite`, `@vitejs/*`, `vitest` and `@vitest/*` majors form one group, so vite and its React plugin land in the same PR |
 | Formatters and linters | `@biomejs/biome`, `prettier`, `eslint` and `oxlint` are pinned to exact versions, so a new release never changes formatting inside a lockfile PR |
 | Bun | Every Bun pin moves in one PR, including a `bun-version` input passed to a reusable workflow (a custom regex manager; it assumes 2-space YAML) |
+| Node.js | Cap `engines.node`, `.nvmrc`, `.node-version`, Docker `node` images and `@types/node` at major 24, while allowing Node 24 minor and patch updates. |
 | Lockfiles | Weekly lockfile maintenance PR on Thursday, apart from Monday's grouped PR so the two never conflict in `bun.lock` |
 | Commits | Conventional Commits: `chore(deps): ...` |
 | Limits | At most 3 open PRs and 2 new PRs per hour per repository |

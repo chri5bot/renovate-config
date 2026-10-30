@@ -35,6 +35,17 @@
   },
   "packageRules": [
     {
+      "description": "Keep Node.js runtimes and types at major 24 or below while allowing minor and patch updates.",
+      "matchPackageNames": [
+        "node",
+        "@types/node",
+        "library/node",
+        "docker.io/node",
+        "docker.io/library/node"
+      ],
+      "allowedVersions": "<25"
+    },
+    {
       "description": "Major updates are listed on the Dependency Dashboard and only get a PR once approved there.",
       "matchUpdateTypes": [
         "major"
